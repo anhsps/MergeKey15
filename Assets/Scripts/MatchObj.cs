@@ -126,7 +126,7 @@ public class MatchObj : MonoBehaviour
 
         while (elapsed < duration)
         {
-            color.a = Mathf.Lerp(1f, 0, elapsed / duration);
+            color.a = Mathf.Lerp(1f, 0, elapsed / duration);// color.a: gt alpha _ do trong suot cua color
             sr.color = color;
             elapsed += Time.deltaTime;
             yield return null;

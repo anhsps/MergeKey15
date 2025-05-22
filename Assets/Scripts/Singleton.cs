@@ -15,8 +15,6 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
                 _instance = FindObjectOfType<T>();
                 if (_instance == null)
                 {
-                    /*GameObject obj = new GameObject(typeof(T).Name);
-                    _instance = obj.AddComponent<T>();*/
                     Debug.Log("instance " + typeof(T).Name + " null");
                 }
             }
@@ -24,11 +22,10 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         }
     }
 
-    // dam bao chi co 1 instance
     protected virtual void Awake()
     {
+        Time.timeScale = 1f;
         if (_instance == null) _instance = this as T;
         else Destroy(gameObject);
-        Time.timeScale = 1f;
     }
 }

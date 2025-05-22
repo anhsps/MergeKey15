@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class GameManager15 : Singleton<GameManager15>
 {
     public static int level;
+
     [SerializeField] private TextMeshProUGUI lvText;
     [SerializeField] private Button retryBtn;
     [SerializeField] private GameObject nextBtn_win;
@@ -49,15 +50,15 @@ public class GameManager15 : Singleton<GameManager15>
 
         PlayerPrefs.SetInt("CurrentLevel", levelIndex);
 
-        if (lvText) lvText.text = "LEVEL " + (levelIndex < 10 ? "0" + levelIndex : levelIndex);
-
-        if (gridPrefabs.Length > 0) CreateGrid(levelIndex);
+        if (lvText) lvText.text = "LEVEL " + levelIndex.ToString("00");
+        if (gridPrefabs.Length > 0) StartCoroutine(CreateGrid(levelIndex));
     }
 
-    private void CreateGrid(int levelIndex)
+    private IEnumerator CreateGrid(int levelIndex)
     {
         foreach (Transform child in gridParent)
             Destroy(child.gameObject);
+        yield return null;// wait destroy complete
 
         if (gridPrefabs[levelIndex - 1] != null)
             Instantiate(gridPrefabs[levelIndex - 1], gridParent);
@@ -69,12 +70,20 @@ public class GameManager15 : Singleton<GameManager15>
     public void StartGame() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     public void Retry() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
-    public void NextLV()
+    public void NextLV() => SetCurrentLV(level + 1);
+
+    public void UnlockNextLevel()
     {
-        PlayerPrefs.SetInt("CurrentLevel", level + 1);
+        int unlockedLevel = PlayerPrefs.GetInt("UnlockedLevel", 1);
+        if (level >= unlockedLevel && level < maxLV)
+            PlayerPrefs.SetInt("UnlockedLevel", level + 1);
+    }
+
+    public void SetCurrentLV(int levelIndex)
+    {
+        PlayerPrefs.SetInt("CurrentLevel", levelIndex);
         PlayerPrefs.Save();
         SceneManager.LoadScene("1");
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     public void GameWin()
@@ -89,25 +98,10 @@ public class GameManager15 : Singleton<GameManager15>
         ShowPanel(menu, panel);
     }
 
-    public void UnlockNextLevel()
-    {
-        int unlockedLevel = PlayerPrefs.GetInt("UnlockedLevel", 1);
-        if (level >= unlockedLevel && level < maxLV)
-            PlayerPrefs.SetInt("UnlockedLevel", level + 1);
-    }
-
-    public void SetCurrentLV(int levelIndex)
-    {
-        PlayerPrefs.SetInt("CurrentLevel", levelIndex);
-        PlayerPrefs.Save();
-        SceneManager.LoadScene("1");
-        //SceneManager.LoadScene(levelIndex.ToString());
-    }
-
     private void ShowPanel(GameObject menu, RectTransform panel)
     {
-        menu.SetActive(true);
         Time.timeScale = 0f;
+        menu.SetActive(true);
         menu.GetComponent<CanvasGroup>().DOFade(1, tweenDuration).SetUpdate(true);
         panel.DOAnchorPosY(middlePosY, tweenDuration).SetUpdate(true);
     }

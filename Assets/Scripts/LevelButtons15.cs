@@ -11,8 +11,8 @@ public class LevelButtons15 : MonoBehaviour
 
     void Start()
     {
-        int unlockedLevel = PlayerPrefs.GetInt("UnlockedLevel", 1);
         levelButtons = GetComponentsInChildren<Button>(true);
+        int unlockedLevel = PlayerPrefs.GetInt("UnlockedLevel", 1);
 
         for (int i = 0; i < levelButtons.Length; i++)
         {
@@ -36,8 +36,7 @@ public class LevelButtons15 : MonoBehaviour
                 buttonImage.sprite = lockedSprite;
             }
 
-            if (buttonText)
-                buttonText.text = levelIndex < 10 ? "0" + levelIndex : levelIndex.ToString();
+            if (buttonText) buttonText.text = levelIndex.ToString("00");
         }
     }
 
